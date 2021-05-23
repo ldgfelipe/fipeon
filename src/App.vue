@@ -1,9 +1,10 @@
 <template>
-    <div class="templatesite">
+    <v-main>
       
       <layout />
-
-    </div>
+<footer class="templatesite">
+</footer>
+    </v-main>
 
 </template> 
 <script>
