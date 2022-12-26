@@ -8,7 +8,7 @@
 			<v-btn class="secondary" @click="creaNuevaTarea()"><v-icon>mdi-plus</v-icon></v-btn>
 			<v-btn class="secondary" @click="cargaTareas()"><v-icon>mdi-reload</v-icon></v-btn>
 
-			<v-data-table :headers="titulotareas" :items="tareas">
+			<v-data-table :headers="titulotareas" :items="listadotareas">
 				<template v-slot:item.status="{ item }">
 					<v-icon>{{item.status ? 'mdi-check' : 'mdi-close'}}</v-icon>
 				</template>
@@ -56,6 +56,7 @@
 	</v-card>
 </template>
 <script>
+import {mapState,mapMutations} from 'vuex'
 export default {
 
 	data(){
@@ -85,16 +86,19 @@ export default {
 			],
 			action:"",
 			tareaventana:false,
-			tareas:[],
 			filetoload:"",
 			msjupload:""
 
 		}
 	},
+	computed:{
+		...mapState(['listadotareas'])
+	},
 	created(){
 		this.cargaTareas()
 	},
 	methods:{
+		...mapMutations(['cambiaTareas']),
 		eliminarArchivo(file){
 			  const storage = this.$fire.storage
 
@@ -203,13 +207,14 @@ export default {
 		}
 		},
 		async cargaTareas(){
-			this.tareas=[]
+			var tareas=[]
 			if(this.proyecto){
 			await this.$fire.firestore.collection('tareas').where('idproyecto','==',this.proyecto.id).get()
 			.then((tar)=>{
 				tar.forEach((ta)=>{
-					this.tareas.push(ta.data())
+					tareas.push(ta.data())
 				})
+				this.cambiaTareas(tareas)
 			})
 		}
 		}
